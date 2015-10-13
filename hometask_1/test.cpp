@@ -8,5 +8,7 @@ int main(int argc, char** argv) {
     std::cout << a << std::endl;
     MathVector b = a + a;
     std::cout << b << std::endl;
+    std::cin >> b;
+    std::cout << b << std::endl;
     return 0;
 }

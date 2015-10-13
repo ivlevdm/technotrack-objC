@@ -4,6 +4,9 @@
 #include <iterator>
 #include <stdexcept>
 #include <cmath>
+#include <string>
+#include <sstream>
+#include <vector>
 
 MathVector::MathVector(unsigned int size): size_(size), values_(new double[size]) {}
 
@@ -141,3 +144,48 @@ std::ostream& operator<<(std::ostream& os, const MathVector& vect) {
     return os;
 }
 
+
+std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) {
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+    return elems;
+}
+
+
+std::vector<std::string> split(const std::string &s, char delim) {
+    std::vector<std::string> elems;
+    split(s, delim, elems);
+    return elems;
+}
+
+
+std::istream& operator>>(std::istream& is, MathVector& vect) {
+    char c;
+    std::string input;
+    is >> c;
+    if (c != '(') {
+        throw std::runtime_error("Incorrect format");
+    }
+
+    is >> c;
+    while (c != ')') {
+        input += c;
+        is >> c;
+    }
+    
+    std::vector<std::string> str_values = split(input, ',');
+    double* buf = new double[str_values.size()];
+    if (vect.size_ != 0) {
+        delete[] vect.values_;
+    }
+    vect.values_ = buf;
+    vect.size_ = str_values.size();
+    for (unsigned int  i = 0; i < vect.size_; ++i) {
+        vect.values_[i] = std::stod(str_values[i]);
+    }
+
+    return is;
+}
