@@ -5,6 +5,7 @@
 
 class MathVector {
 public:
+    MathVector();
     MathVector(unsigned int size);
     MathVector(int argn, ...);
     MathVector(const MathVector& copy);
@@ -15,6 +16,7 @@ public:
     unsigned int get_size() const;
     MathVector opposite() const;
     MathVector add(const MathVector& other) const;
+    MathVector sub(const MathVector& other) const;
     double scalar_mul(const MathVector& other) const;
     double length() const;
 
@@ -23,7 +25,9 @@ public:
     double& operator[](unsigned int dim);
 
     MathVector operator+(const MathVector& other) const;
+    MathVector operator-(const MathVector& other) const;
     double operator*(const MathVector& other) const;
+    friend MathVector operator*(double coef, const MathVector& vect);
 
     friend std::ostream& operator<<(std::ostream& os, const MathVector& vect);
     friend std::istream& operator>>(std::istream& is, MathVector& vect);
@@ -31,6 +35,6 @@ public:
 private:
     unsigned int size_;
     double *values_;
-}; 
+};
 
 #endif // OBJC_HOMETASK_1_MATH_VECTOR_HPP_
