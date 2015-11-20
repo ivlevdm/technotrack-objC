@@ -139,6 +139,16 @@ public:
 
     iterator begin();
     const_iterator begin() const;
+    iterator end();
+    const_iterator end() const;
+    reverse_iterator rbegin();
+    const_reverse_iterator rbegin() const;
+    reverse_iterator rend();
+    const_reverse_iterator rend() const;
+    const_iterator cbegin() const;
+    const_iterator cend() const;
+    const_reverse_iterator crbegin() const;
+    const_reverse_iterator crend() const;
 
     template <class InputIterator> void assign(InputIterator first, InputIterator last);
     void assign(size_t n, const T& val);
@@ -147,6 +157,11 @@ public:
     void push_back(const T& val);
     void push_back(T&& val);
     void pop_back();
+
+    iterator insert(const_iterator position, const T& val);
+    iterator insert(const_iterator position, size_t n, const T& val);
+    template <class InputIterator>
+    iterator insert (const_iterator position, InputIterator first, InputIterator last);
 
     void clear();
 
@@ -370,18 +385,71 @@ class hashed_vector<T, Hash>::iterator hashed_vector<T, Hash>::begin() {
     return iterator(vector_.data());
 }
 
+
 template <typename T, int32_t (*Hash)(T&)>
 class hashed_vector<T, Hash>::const_iterator hashed_vector<T, Hash>::begin() const {
     return const_iterator(vector_.data());
-};
+}
+
+
+template <typename T, int32_t (*Hash)(T&)>
+class hashed_vector<T, Hash>::iterator hashed_vector<T, Hash>::end() {
+    return iterator(vector_.data() + vector_.size());
+}
+
+
+template <typename T, int32_t (*Hash)(T&)>
+class hashed_vector<T, Hash>::const_iterator hashed_vector<T, Hash>::end() const {
+    return const_iterator(vector_.data() + vector_.size());
+}
 
 
 
 template <typename T, int32_t (*Hash)(T&)>
-template <class InputIterator>
-void hashed_vector<T, Hash>::assign(InputIterator first, InputIterator last) {
-    vector_.assign(first, last);
-    update_hash_table();
+class hashed_vector<T, Hash>::reverse_iterator hashed_vector<T, Hash>::rbegin() {
+    return reverse_iterator(vector_.data() + vector_.size() - 1);
+}
+
+
+template <typename T, int32_t (*Hash)(T&)>
+class hashed_vector<T, Hash>::const_reverse_iterator hashed_vector<T, Hash>::rbegin() const {
+    return const_reverse_iterator(vector_.data() + vector_.size() - 1);
+}
+
+
+template <typename T, int32_t (*Hash)(T&)>
+class hashed_vector<T, Hash>::reverse_iterator hashed_vector<T, Hash>::rend() {
+    return reverse_iterator(vector_.data() - 1);
+}
+
+
+template <typename T, int32_t (*Hash)(T&)>
+class hashed_vector<T, Hash>::const_reverse_iterator hashed_vector<T, Hash>::rend() const {
+    return const_reverse_iterator(vector_.data() - 1);
+}
+
+
+template <typename T, int32_t (*Hash)(T&)>
+class hashed_vector<T, Hash>::const_iterator hashed_vector<T, Hash>::cbegin() const {
+    return const_iterator(vector_.data());
+}
+
+
+template <typename T, int32_t (*Hash)(T&)>
+class hashed_vector<T, Hash>::const_iterator hashed_vector<T, Hash>::cend() const {
+    return const_iterator(vector_.data() + vector_.size());
+}
+
+
+template <typename T, int32_t (*Hash)(T&)>
+class hashed_vector<T, Hash>::const_reverse_iterator hashed_vector<T, Hash>::crbegin() const {
+    return const_reverse_iterator(vector_.data() + vector_.size() - 1);
+}
+
+
+template <typename T, int32_t (*Hash)(T&)>
+class hashed_vector<T, Hash>::const_reverse_iterator hashed_vector<T, Hash>::crend() const {
+    return const_reverse_iterator(vector_.data() - 1);
 }
 
 
