@@ -8,8 +8,76 @@
 template <typename T, int32_t (*Hash)(T&)>
 class hashed_vector {
 public:
-    class iterator<T> {
+    typedef T value_type;
+    typedef T& reference;
+    typedef T* pointer;
 
+    class iterator
+    {
+    public:
+        typedef iterator self_type;
+        typedef std::random_access_iterator_tag  iterator_category;
+
+        iterator(pointer ptr) : ptr_(ptr) { }
+        self_type operator++() { self_type i = *this; ptr_++; return i; }
+        self_type operator++(int junk) { ptr_++; return *this; }
+        reference operator*() { return *ptr_; }
+        pointer operator->() { return ptr_; }
+        bool operator==(const self_type& rhs) { return ptr_ == rhs.ptr_; }
+        bool operator!=(const self_type& rhs) { return ptr_ != rhs.ptr_; }
+    private:
+        pointer ptr_;
+    };
+
+    class const_iterator
+    {
+    public:
+        typedef const_iterator self_type;
+        typedef std::random_access_iterator_tag iterator_category;
+
+        const_iterator(pointer ptr) : ptr_(ptr) { }
+        self_type operator++() { self_type i = *this; ptr_++; return i; }
+        self_type operator++(int junk) { ptr_++; return *this; }
+        const reference operator*() { return *ptr_; }
+        const pointer operator->() { return ptr_; }
+        bool operator==(const self_type& rhs) { return ptr_ == rhs.ptr_; }
+        bool operator!=(const self_type& rhs) { return ptr_ != rhs.ptr_; }
+    private:
+        pointer ptr_;
+    };
+
+    class reverse_iterator
+    {
+    public:
+        typedef reverse_iterator self_type;
+        typedef std::random_access_iterator_tag  iterator_category;
+
+        reverse_iterator(pointer ptr) : ptr_(ptr) { }
+        self_type operator++() { self_type i = *this; ptr_--; return i; }
+        self_type operator++(int junk) { ptr_--; return *this; }
+        reference operator*() { return *ptr_; }
+        pointer operator->() { return ptr_; }
+        bool operator==(const self_type& rhs) { return ptr_ == rhs.ptr_; }
+        bool operator!=(const self_type& rhs) { return ptr_ != rhs.ptr_; }
+    private:
+        pointer ptr_;
+    };
+
+    class const_reverse_iterator
+    {
+    public:
+        typedef const_reverse_iterator self_type;
+        typedef std::random_access_iterator_tag iterator_category;
+
+        const_reverse_iterator(pointer ptr) : ptr_(ptr) { }
+        self_type operator++() { self_type i = *this; ptr_--; return i; }
+        self_type operator++(int junk) { ptr_--; return *this; }
+        const reference operator*() { return *ptr_; }
+        const pointer operator->() { return ptr_; }
+        bool operator==(const self_type& rhs) { return ptr_ == rhs.ptr_; }
+        bool operator!=(const self_type& rhs) { return ptr_ != rhs.ptr_; }
+    private:
+        pointer ptr_;
     };
 
     explicit hashed_vector() {}
