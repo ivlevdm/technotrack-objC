@@ -4,18 +4,19 @@
 #include <vector>
 #include <list>
 #include <functional>
+#include <initializer_list>
+#include <algorithm>
 
 template <typename T, int32_t (*Hash)(T&)>
 class hashed_vector {
 public:
-    typedef T value_type;
-    typedef T& reference;
-    typedef T* pointer;
-
     class iterator
     {
     public:
         typedef iterator self_type;
+        typedef T value_type;
+        typedef T& reference;
+        typedef T* pointer;
         typedef std::random_access_iterator_tag  iterator_category;
 
         iterator(pointer ptr) : ptr_(ptr) { }
@@ -33,6 +34,9 @@ public:
     {
     public:
         typedef const_iterator self_type;
+        typedef T value_type;
+        typedef T& reference;
+        typedef T* pointer;
         typedef std::random_access_iterator_tag iterator_category;
 
         const_iterator(pointer ptr) : ptr_(ptr) { }
@@ -50,6 +54,9 @@ public:
     {
     public:
         typedef reverse_iterator self_type;
+        typedef T value_type;
+        typedef T& reference;
+        typedef T* pointer;
         typedef std::random_access_iterator_tag  iterator_category;
 
         reverse_iterator(pointer ptr) : ptr_(ptr) { }
@@ -67,6 +74,9 @@ public:
     {
     public:
         typedef const_reverse_iterator self_type;
+        typedef T value_type;
+        typedef T& reference;
+        typedef T* pointer;
         typedef std::random_access_iterator_tag iterator_category;
 
         const_reverse_iterator(pointer ptr) : ptr_(ptr) { }
@@ -83,7 +93,7 @@ public:
     explicit hashed_vector() {}
     explicit hashed_vector(size_t n);
     hashed_vector(size_t n, const T& val);
-    template <class InputIterator> hashed_vector(InputIterator first, InputIterator last);
+    //template <class InputIterator> hashed_vector(InputIterator first, InputIterator last);
     hashed_vector(const hashed_vector& hv);
     hashed_vector(hashed_vector&& hv);
     hashed_vector(std::initializer_list<T> il);
@@ -120,9 +130,12 @@ public:
     T* data();
     const T* data() const;
 
-    template <class InputIterator> void assign(InputIterator first, InputIterator last);
+    iterator begin();
+    const_iterator begin() const;
+
+    //template <class InputIterator> void assign(InputIterator first, InputIterator last);
     void assign(size_t n, const T& val);
-    void assign(initializer_list<T> il);
+    void assign(std::initializer_list<T> il);
 
     void push_back(const T& val);
     void push_back(T&& val);
@@ -155,12 +168,11 @@ hashed_vector<T, Hash>::hashed_vector(size_t n, const T& val) : vector_(n, val) 
     update_hash_table();
 }
 
-
-template <typename T, int32_t (*Hash)(T&), InputIterator>
-hashed_vector<T, Hash>::hashed_vector(InputIterator first, InputIterator last) :
-    vector_(first, last) {
+/*
+template <typename T, int32_t (*Hash)(T&),class InputIterator>
+hashed_vector<T, Hash>::hashed_vector(InputIterator first, InputIterator last) : vector_(first, last) {
     update_hash_table();
-}
+}*/
 
 
 template <typename T, int32_t (*Hash)(T&)>
@@ -189,14 +201,14 @@ hashed_vector<T, Hash>::~hashed_vector() {}
 
 
 template <typename T, int32_t (*Hash)(T&)>
-hashed_vector& hashed_vector<T, Hash>::operator=(hashed_vector hv) {
+hashed_vector<T, Hash>& hashed_vector<T, Hash>::operator=(hashed_vector hv) {
     swap(this, hv);
     return *this;
 }
 
 
 template <typename T, int32_t (*Hash)(T&)>
-hashed_vector& hashed_vector<T, Hash>::operator=(hashed_vector&& hv) {
+hashed_vector<T, Hash>& hashed_vector<T, Hash>::operator=(hashed_vector&& hv) {
     vector_ = std::move(hv.vector_);
     update_hash_table();
     return *this;
@@ -204,7 +216,7 @@ hashed_vector& hashed_vector<T, Hash>::operator=(hashed_vector&& hv) {
 
 
 template <typename T, int32_t (*Hash)(T&)>
-hashed_vector& hashed_vector<T, Hash>::operator=(std::initializer_list<T> il) {
+hashed_vector<T, Hash>& hashed_vector<T, Hash>::operator=(std::initializer_list<T> il) {
     vector_ = il;
     update_hash_table();
     return *this;
@@ -272,7 +284,7 @@ size_t hashed_vector<T, Hash>::capacity() const {
 
 
 template <typename T, int32_t (*Hash)(T&)>
-bool hashed_vector<T, Hash>::empty() {
+bool hashed_vector<T, Hash>::empty() const {
     return vector_.empty();
 }
 
@@ -349,11 +361,23 @@ const T* hashed_vector<T, Hash>::data() const {
 }
 
 
+template <typename T, int32_t (*Hash)(T&)>
+hashed_vector<T, Hash>::iterator hashed_vector<T, Hash>::begin() {
+    return iterator(vector_.data());
+}
+
+template <typename T, int32_t (*Hash)(T&)>
+hashed_vector<T, Hash>::const_iterator hashed_vector<T, Hash>::begin() const {
+    return const_iterator(vector_.data());
+};
+
+
+/*
 template <typename T, int32_t (*Hash)(T&), class InputIterator>
 void hashed_vector<T, Hash>::assign(InputIterator first, InputIterator last) {
     vector_.assign(first, last);
     update_hash_table();
-}
+} */
 
 
 template <typename T, int32_t (*Hash)(T&)>
@@ -364,7 +388,7 @@ void hashed_vector<T, Hash>::assign(size_t n, const T& val) {
 
 
 template <typename T, int32_t (*Hash)(T&)>
-void hashed_vector<T, Hash>::assign(initializer_list<T> il) {
+void hashed_vector<T, Hash>::assign(std::initializer_list<T> il) {
     vector_.assign(il);
     update_hash_table();
 }
@@ -385,7 +409,7 @@ void hashed_vector<T, Hash>::push_back(T&& val) {
 
 
 template <typename T, int32_t (*Hash)(T&)>
-void hashed_vector<T, Hash>::push_back(T&& val) {
+void hashed_vector<T, Hash>::pop_back() {
     if (!vector_.empty()) {
         remove_hash_elem(vector_.back(), vector_.size() - 1);
     }
@@ -399,9 +423,8 @@ void hashed_vector<T, Hash>::clear() {
     update_hash_table();
 }
 
-
+template <typename T, int32_t (*Hash)(T&)>
 void swap(hashed_vector<T, Hash> &one, hashed_vector<T, Hash> &two) {
-    std::swap(one.changes_, two.changes_);
     std::swap(one.vector_, two.vector_);
     std::swap(one.hash_table_, two.hash_table_);
 }
@@ -410,7 +433,7 @@ void swap(hashed_vector<T, Hash> &one, hashed_vector<T, Hash> &two) {
 template <typename T, int32_t (*Hash)(T&)>
 void hashed_vector<T, Hash>::insert_hash_elem(T &val, uint32_t pos) {
     uint32_t index = Hash(val) % HASH_MOD;
-    hash_table_[index].push_back(std::pair(val, pos));
+    hash_table_[index].push_back(std::pair<T&, size_t>(val, pos));
 }
 
 
@@ -432,7 +455,7 @@ template <typename T, int32_t (*Hash)(T&)>
 void hashed_vector<T, Hash>::update_hash_table() {
     size_t i = 0;
     std::for_each(hash_table_, hash_table_ + HASH_MOD,
-                  [](hash_elem &elem){ elem.clear() });
+                  [](hash_elem &elem){ elem.clear(); });
     std::for_each(vector_.begin(), vector_.end(),
                   [&i](T &val) { insert_hash_elem(val, i); ++i;});
 }
