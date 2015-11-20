@@ -100,7 +100,7 @@ public:
     explicit hashed_vector() {}
     explicit hashed_vector(size_t n);
     hashed_vector(size_t n, const T& val);
-    //template <class InputIterator> hashed_vector(InputIterator first, InputIterator last);
+    template <class InputIterator> hashed_vector(InputIterator first, InputIterator last);
     hashed_vector(const hashed_vector& hv);
     hashed_vector(hashed_vector&& hv);
     hashed_vector(std::initializer_list<T> il);
@@ -140,7 +140,7 @@ public:
     iterator begin();
     const_iterator begin() const;
 
-    //template <class InputIterator> void assign(InputIterator first, InputIterator last);
+    template <class InputIterator> void assign(InputIterator first, InputIterator last);
     void assign(size_t n, const T& val);
     void assign(std::initializer_list<T> il);
 
@@ -160,7 +160,6 @@ private:
 
     std::vector<T> vector_;
     std::vector<hash_elem> hash_table_;
-    //hash_elem hash_table_[HASH_MOD];
     bool is_always_update = true;
 };
 
@@ -176,11 +175,12 @@ hashed_vector<T, Hash>::hashed_vector(size_t n, const T& val) : vector_(n, val),
     update_hash_table();
 }
 
-/*
-template <typename T, int32_t (*Hash)(T&),class InputIterator>
+
+template <typename T, int32_t (*Hash)(T&)>
+template <class InputIterator>
 hashed_vector<T, Hash>::hashed_vector(InputIterator first, InputIterator last) : vector_(first, last) {
     update_hash_table();
-}*/
+}
 
 
 template <typename T, int32_t (*Hash)(T&)>
@@ -366,22 +366,23 @@ const T* hashed_vector<T, Hash>::data() const {
 
 
 template <typename T, int32_t (*Hash)(T&)>
-iterator hashed_vector<T, Hash>::begin() {
+class hashed_vector<T, Hash>::iterator hashed_vector<T, Hash>::begin() {
     return iterator(vector_.data());
 }
 
 template <typename T, int32_t (*Hash)(T&)>
-hashed_vector<T, Hash>::const_iterator hashed_vector<T, Hash>::begin() const {
+class hashed_vector<T, Hash>::const_iterator hashed_vector<T, Hash>::begin() const {
     return const_iterator(vector_.data());
 };
 
 
-/*
-template <typename T, int32_t (*Hash)(T&), class InputIterator>
+
+template <typename T, int32_t (*Hash)(T&)>
+template <class InputIterator>
 void hashed_vector<T, Hash>::assign(InputIterator first, InputIterator last) {
     vector_.assign(first, last);
     update_hash_table();
-} */
+}
 
 
 template <typename T, int32_t (*Hash)(T&)>
