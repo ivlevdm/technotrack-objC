@@ -152,19 +152,20 @@ private:
     typedef std::pair<uint32_t, uint32_t> change;
 
     std::vector<T> vector_;
-    hash_elem hash_table_[HASH_MOD];
+    std::vector<hash_elem> hash_table_;
+    //hash_elem hash_table_[HASH_MOD];
     bool is_always_update = true;
 };
 
 
 template <typename T, int32_t (*Hash)(T&)>
-hashed_vector<T, Hash>::hashed_vector(size_t n) : vector_(n) {
+hashed_vector<T, Hash>::hashed_vector(size_t n) : vector_(n), hash_table_(HASH_MOD) {
     update_hash_table();
 }
 
 
 template <typename T, int32_t (*Hash)(T&)>
-hashed_vector<T, Hash>::hashed_vector(size_t n, const T& val) : vector_(n, val) {
+hashed_vector<T, Hash>::hashed_vector(size_t n, const T& val) : vector_(n, val), hash_table_(HASH_MOD) {
     update_hash_table();
 }
 
@@ -176,18 +177,14 @@ hashed_vector<T, Hash>::hashed_vector(InputIterator first, InputIterator last) :
 
 
 template <typename T, int32_t (*Hash)(T&)>
-hashed_vector<T, Hash>::hashed_vector(const hashed_vector& hv) : vector_(hv.vector_) {
+hashed_vector<T, Hash>::hashed_vector(const hashed_vector& hv) : vector_(hv.vector_), hash_table_(hv.hash_table_) {
     update_hash_table();
 }
 
 
 template <typename T, int32_t (*Hash)(T&)>
-hashed_vector<T, Hash>::hashed_vector(hashed_vector&& hv) : vector_(std::move(hv.vector_)) {
-    for (uint32_t i = 0; i < HASH_MOD; ++i) {
-        hash_table_[i](std::move(hv.hash_table_[i]));
-        hv.hash_table_[i] = nullptr;
-    }
-}
+hashed_vector<T, Hash>::hashed_vector(hashed_vector&& hv) : vector_(std::move(hv.vector_)),
+    hash_table_(std::move(hv.hash_table_)) {}
 
 
 template <typename T, int32_t (*Hash)(T&)>
@@ -362,7 +359,7 @@ const T* hashed_vector<T, Hash>::data() const {
 
 
 template <typename T, int32_t (*Hash)(T&)>
-hashed_vector<T, Hash>::iterator hashed_vector<T, Hash>::begin() {
+iterator hashed_vector<T, Hash>::begin() {
     return iterator(vector_.data());
 }
 
@@ -422,6 +419,7 @@ void hashed_vector<T, Hash>::clear() {
     vector_.clear();
     update_hash_table();
 }
+
 
 template <typename T, int32_t (*Hash)(T&)>
 void swap(hashed_vector<T, Hash> &one, hashed_vector<T, Hash> &two) {
