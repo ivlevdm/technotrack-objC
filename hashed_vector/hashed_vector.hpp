@@ -7,6 +7,13 @@
 #include <initializer_list>
 #include <algorithm>
 
+
+template  <typename T, int32_t (*Hash)(T&)> class hashed_vector;
+
+template <typename T,int32_t (*Hash)(T&)>
+void swap(hashed_vector<T, Hash>& one, hashed_vector<T, Hash>& two);
+
+
 template <typename T, int32_t (*Hash)(T&)>
 class hashed_vector {
 public:
@@ -143,7 +150,7 @@ public:
 
     void clear();
 
-    friend void swap(hashed_vector<T, Hash> &one, hashed_vector<T, Hash> &two);
+    friend void swap<>(hashed_vector<T, Hash> &one, hashed_vector<T, Hash> &two);
 
 private:
     static const uint32_t HASH_MOD = 113;
