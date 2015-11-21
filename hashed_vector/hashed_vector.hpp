@@ -117,6 +117,8 @@ public:
     void no_update() { is_always_update = false; }
     void always_update() { is_always_update = true; }
 
+    size_t find(const T& val);
+
     size_t size() const;
     size_t max_size() const;
     void resize(size_t n);
@@ -634,4 +636,16 @@ void hashed_vector<T, Hash>::update_hash_table() {
     std::for_each(vector_.begin(), vector_.end(),
                   [&i](T &val) { insert_hash_elem(val, i); ++i;});
 }
+
+
+template <typename T, int32_t (*Hash)(T&)>
+size_t hashed_vector<T, Hash>::find(const T& val) {
+    uint32_t index = Hash(val) % HASH_MOD;
+    hash_elem &elem = hash_table_[index];
+    size_t pos = vector_.size();
+    std::for_each(elem.begin(), elem.end(),
+                  [&pos, &val](hash_elem& elem) {if (elem->first == val && elem->second < pos) pos = elem->second;});
+    return pos;
+}
+
 #endif //OBJC_HASHED_VECTOR_HPP_
