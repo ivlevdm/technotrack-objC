@@ -161,7 +161,12 @@ public:
     iterator insert(const_iterator position, const T& val);
     iterator insert(const_iterator position, size_t n, const T& val);
     template <class InputIterator>
-    iterator insert (const_iterator position, InputIterator first, InputIterator last);
+    iterator insert(const_iterator position, InputIterator first, InputIterator last);
+    iterator insert(const_iterator position, T&& val);
+    iterator insert(const_iterator position, std::initializer_list<T> il);
+
+    iterator erase(const_iterator position);
+    iterator erase(const_iterator first, const_iterator last);
 
     void clear();
 
@@ -487,6 +492,102 @@ void hashed_vector<T, Hash>::pop_back() {
         remove_hash_elem(vector_.back(), vector_.size() - 1);
     }
     vector_.pop_back();
+}
+
+
+template <typename T, int32_t (*Hash)(T&)>
+class hashed_vector<T, Hash>::iterator hashed_vector<T, Hash>::insert(const_iterator position, const T &val) {
+    auto it = vector_.begin();
+    std::advance(it, std::distance(begin(), position));
+    it = vector_.insert(it, val);
+
+    if (is_always_update)
+        update_hash_table();
+
+    return iterator(vector_.data() + std::distance(vector_.begin(), it));
+}
+
+
+template <typename T, int32_t (*Hash)(T&)>
+class hashed_vector<T, Hash>::iterator hashed_vector<T, Hash>::insert(const_iterator position, size_t n, const T &val) {
+    auto it = vector_.begin();
+    std::advance(it, std::distance(begin(), position));
+    it = vector_.insert(it, n, val);
+
+    if (is_always_update)
+        update_hash_table();
+
+    return iterator(vector_.data() + std::distance(vector_.begin(), it));
+}
+
+
+template <typename T, int32_t (*Hash)(T&)>
+template <class InputIterator>
+class hashed_vector<T, Hash>::iterator hashed_vector<T, Hash>::insert(const_iterator position, InputIterator first,
+                                                                      InputIterator last) {
+    auto it = vector_.begin();
+    std::advance(it, std::distance(begin(), position));
+    it = vector_.insert(it, first, last);
+
+    if (is_always_update)
+        update_hash_table();
+
+    return iterator(vector_.data() + std::distance(vector_.begin(), it));
+}
+
+
+template <typename T, int32_t (*Hash)(T&)>
+class hashed_vector<T, Hash>::iterator hashed_vector<T, Hash>::insert(const_iterator position, T&& val) {
+    auto it = vector_.begin();
+    std::advance(it, std::distance(begin(), position));
+    it = vector_.insert(it, val);
+
+    if (is_always_update)
+        update_hash_table();
+
+    return iterator(vector_.data() + std::distance(vector_.begin(), it));
+}
+
+
+template <typename T, int32_t (*Hash)(T&)>
+class hashed_vector<T, Hash>::iterator hashed_vector<T, Hash>::insert(const_iterator position,
+                                                                      std::initializer_list<T> il) {
+    auto it = vector_.begin();
+    std::advance(it, std::distance(begin(), position));
+    it = vector_.insert(it, il);
+
+    if (is_always_update)
+        update_hash_table();
+
+    return iterator(vector_.data() + std::distance(vector_.begin(), it));
+}
+
+
+template <typename T, int32_t (*Hash)(T&)>
+class hashed_vector<T, Hash>::iterator hashed_vector<T, Hash>::erase(const_iterator position) {
+    auto it = vector_.begin();
+    std::advance(it, std::distance(begin(), position));
+    it = vector_.erase(it);
+
+    if (is_always_update)
+        update_hash_table();
+
+    return iterator(vector_.data() + std::distance(vector_.begin(), it));
+}
+
+
+template <typename T, int32_t (*Hash)(T&)>
+class hashed_vector<T, Hash>::iterator hashed_vector<T, Hash>::erase(const_iterator first, const_iterator last) {
+    auto first_it = vector_.begin();
+    auto last_it = vector_.begin();
+    std::advance(first_it, std::distance(begin(), first));
+    std::advance(last_it, std::distance(begin(), last));
+    auto it = vector_.erase(first_it, last_it);
+
+    if (is_always_update)
+        update_hash_table();
+
+    return iterator(vector_.data() + std::distance(vector_.begin(), it));
 }
 
 
