@@ -1,0 +1,7 @@
+Connection = "keep-alive";
+"Content-Length" = 830;
+"Content-Type" = "application/json;charset=utf-8";
+Date = "Fri, 02 Oct 2015 09:44:56 GMT";
+Server = "nginx/1.7.6";
+
+{"text": "Hello, world!", "ts": 1000, "id":689924120}
