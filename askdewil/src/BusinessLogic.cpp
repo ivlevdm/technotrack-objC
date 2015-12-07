@@ -2,7 +2,7 @@
 
 void BusinessLogic::run() {
     boost::asio::io_service::work work(service_);
-    std::vector<Question> questions = protocol_.get_last_question(5);
+    protocol_.get_last_questions(5, [](std::vector<Question>){ std::cout << "Hello, I'm lambda"; });
 
     service_.run();
 }

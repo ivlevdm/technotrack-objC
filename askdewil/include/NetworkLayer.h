@@ -7,7 +7,8 @@
 class NetworkLayer {
 public:
     NetworkLayer(boost::asio::io_service &service) : service_(service) {}
-    std::string fetch_url(const std::string &url);
+    void fetch_url(const std::string &url, const std::string &resp_body,
+                          std::function<void(std::string)> handler);
 
 private:
     boost::asio::io_service &service_;

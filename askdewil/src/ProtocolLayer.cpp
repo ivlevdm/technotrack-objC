@@ -9,6 +9,8 @@
 
 using boost::property_tree::ptree;
 
+const std::string Protocol::url = "http://sniken.asuscomm.com:8090/static/http.html";
+
 Answer parseAnswer(const ptree &node) {
     return Answer {
             .id = node.get<uint32_t>("id"),
@@ -40,13 +42,23 @@ std::vector<Question> parseQuestions(const ptree &node)
     return result;
 }
 
-Question Protocol::get_last_question()
-{
+void Protocol::get_last_questions(uint32_t cnt,
+                                  std::function<void(std::vector<Question>)> handler) {
+
+    network_.fetch_url(url, std::string(""), [handler](std::string json){
+        ptree parsedJson;
+        std::stringstream stream (json);
+        boost::property_tree::read_json(stream, parsedJson);
+        Question q = parseQuestion(parsedJson);
+        std::cout << q.text;
+    });
+    /*
     std::string json = _network.fetch_url(_url);
 
     ptree parsedJson;
     std::stringstream stream (json);
     boost::property_tree::read_json(stream, parsedJson);
     return parseQuestion(parsedJson);
+     */
 }
 #pragma clang diagnostic pop

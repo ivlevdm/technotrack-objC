@@ -25,11 +25,16 @@ public:
     Protocol(const NetworkLayer &network, boost::asio::io_service &service) :
             network_(network),
             service_(service) {}
-    std::vector<Question> get_last_question(uint32_t cnt = 1);
-    Question get_question_by_id(uint32_t id);
+    void get_last_questions(uint32_t cnt,
+                            std::function<void(std::vector<Question>)> handler);
+    void get_question_by_id(uint32_t id, std::function<void(Question)> handler);
+    void get_last_answer( uint32_t question_id, uint32_t cnt,
+                         std::function<void(std::vector<Answer>)> handler);
 
 
 private:
+    static const std::string url;
+
     NetworkLayer network_;
     boost::asio::io_service &service_;
 };

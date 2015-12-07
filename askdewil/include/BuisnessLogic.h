@@ -12,6 +12,8 @@ public:
         return instance;
     }
 
+    static void printQuestions(std::vector<Question> &&questions);
+
     void run();
 
     BusinessLogic(BusinessLogic const&) = delete;
