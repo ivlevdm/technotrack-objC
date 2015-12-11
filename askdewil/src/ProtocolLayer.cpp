@@ -51,6 +51,8 @@ void Protocol::get_last_questions(uint32_t cnt,
         boost::property_tree::read_json(stream, parsedJson);
         Question q = parseQuestion(parsedJson);
         std::cout << q.text;
+        std::vector<Question> res = {q};
+        handler(res);
     });
     /*
     std::string json = _network.fetch_url(_url);
